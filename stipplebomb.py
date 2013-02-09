@@ -74,7 +74,10 @@ def sampleimg(sx, sy):
 
 # image intensity to circle radius
 def itor(i):
-   return ((0.0 + i) / 255.0) * 7.0;
+   r = ((0.0 + i) / 255.0) * 7.0;
+   if r < 0.01:
+	r = 0;
+   return r;
     
 def circle(x, y, r):
 	pygame.draw.circle(screen, white, (x, y), r, 0);
@@ -92,8 +95,11 @@ class ball:
       self.vy = vy;
 
    def move(self):
-      self.x = (self.x + self.vx) % screen_width;
-      self.y = (self.y + self.vy) % screen_height;
+      self.x = int((self.x + self.vx) % screen_width);
+      self.y = int((self.y + self.vy) % screen_height);
+      self.vx = self.vx * 0.95;
+      self.vy = self.vy * 0.95;
+      
 
    def draw(self):
       r = itor(sampleimg(self.x, self.y));
