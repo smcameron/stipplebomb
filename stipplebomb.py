@@ -97,8 +97,40 @@ class ball:
       self.vx = vx;
       self.vy = vy;
 
+   def reset_zone(self, oldx, oldy):
+
+      # calculate previous current zone
+      zx = int(oldx / xzones)
+      zy = int(oldy / yzones)
+
+      # calculate new zone
+      nzx = int(self.x / xzones)
+      nzy = int(self.y / yzones)
+
+      # if the zone hasn't changed, nothing to do.
+      if nzx == zx and nzy == zy:
+         return;
+
+      # remove ourself from the old zone
+      oldlist = zone[(zx, zy)]
+      oldlist.remove(self)
+      zone[(zx, zy)] = oldlist
+
+      # add ourself to the new zone
+      if (nzx, nzy) in zone:
+         newlist = zone[(nzx, nzy)]
+         newlist.append(self)
+      else:
+         newlist = [self]
+      zone[(nzx, nzy)] = newlist
+
    def move(self):
+      # calculate current zone
+      oldx = self.x
+      oldy = self.y 
+      # move
       self.x = self.x + self.vx
+      self.y = self.y + self.vy
       if self.x < 0:
          self.x += 0.0 + screen_width; 
       if self.x > 0.0 + screen_width:
@@ -107,10 +139,11 @@ class ball:
          self.y += 0.0 + screen_height; 
       if self.y > 0.0 + screen_height:
          self.y -= 0.0 + screen_height; 
-      self.y = self.y + self.vy
+
+      # damp velocity 
       self.vx = 0.95 * self.vx
       self.vy = 0.95 * self.vy
-      
+      self.reset_zone(oldx, oldy)
 
    def draw(self):
       r = itor(sampleimg(int(self.x), int(self.y)));
@@ -123,7 +156,7 @@ def addball(x, y, vx, vy):
   myball = ball(x, y, vx, vy);
   balls.append(myball)
   zx = int(x / xzones)
-  zy = int(x / yzones)
+  zy = int(y / yzones)
   if (zx, zy) in zone:
      blist = zone[(zx, zy)];
      blist.append(myball);
