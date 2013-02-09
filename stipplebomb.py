@@ -21,6 +21,7 @@
 # SOFTWARE.
 #
 
+import pygame
 import os, sys
 import Image
 
@@ -30,4 +31,7 @@ y = 4
 
 pix = im.load()
 print pix[x,y]
+
+screen = pygame.display.set_mode((640,480))
+pygame.display.update()
 
