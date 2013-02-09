@@ -83,10 +83,10 @@ def circle(x, y, r):
 	pygame.draw.circle(screen, white, (x, y), r, 0);
 
 class ball:
-   x = 0;
-   y = 0;
-   vx = 0;
-   vy = 0;
+   x = 0.0;
+   y = 0.0;
+   vx = 0.0;
+   vy = 0.0;
 
    def __init__(self, x, y, vx, vy):
       self.x = x;
@@ -95,16 +95,24 @@ class ball:
       self.vy = vy;
 
    def move(self):
-      self.x = int((self.x + self.vx) % screen_width);
-      self.y = int((self.y + self.vy) % screen_height);
-      self.vx = self.vx * 0.95;
-      self.vy = self.vy * 0.95;
+      self.x = self.x + self.vx
+      if self.x < 0:
+         self.x += 0.0 + screen_width; 
+      if self.x > 0.0 + screen_width:
+         self.x -= 0.0 + screen_width; 
+      if self.y < 0:
+         self.y += 0.0 + screen_height; 
+      if self.y > 0.0 + screen_height:
+         self.y -= 0.0 + screen_height; 
+      self.y = self.y + self.vy
+      self.vx = 0.95 * self.vx
+      self.vy = 0.95 * self.vy
       
 
    def draw(self):
-      r = itor(sampleimg(self.x, self.y));
+      r = itor(sampleimg(int(self.x), int(self.y)));
       if (r > 0.01):
-          circle(self.x, self.y, int(r));
+          circle(int(self.x), int(self.y), int(r));
 
 balls = [];
 
