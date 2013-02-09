@@ -37,9 +37,11 @@ pix = im.load()
 print pix[x,y]
 image_width = 0.0 + im.size[0];
 image_height = 0.0 + im.size[1];
-screen_width = 1300
+screen_width = 800
 screen_height = 700
 scaling_factor = (0.0 + screen_height) / (0.0 + image_height);
+black = (0, 0, 0)
+white = (255, 255, 255)
 
 # origin on screen
 osx = (screen_width / 2.0) - (image_width / 2.0) * scaling_factor;
@@ -72,18 +74,58 @@ def sampleimg(sx, sy):
 
 # image intensity to circle radius
 def itor(i):
-   return ((0.0 + i) / 255.0) * 5.0;
+   return ((0.0 + i) / 255.0) * 7.0;
     
 def circle(x, y, r):
-	pygame.draw.circle(screen, (255,255,255), (x, y), r, 0);
+	pygame.draw.circle(screen, white, (x, y), r, 0);
 
-for i in range(0, 10000):
+class ball:
+   x = 0;
+   y = 0;
+   vx = 0;
+   vy = 0;
+
+   def __init__(self, x, y, vx, vy):
+      self.x = x;
+      self.y = y;
+      self.vx = vx;
+      self.vy = vy;
+
+   def move(self):
+      self.x = (self.x + self.vx) % screen_width;
+      self.y = (self.y + self.vy) % screen_height;
+
+   def draw(self):
+      r = itor(sampleimg(self.x, self.y));
+      if (r > 0.01):
+          circle(self.x, self.y, int(r));
+
+balls = [];
+
+def addball(x, y, vx, vy):
+  balls.append(ball(x, y, vx, vy))
+
+def drawballs():
+   for i in balls:
+      i.draw();
+
+def moveballs():
+   for i in balls:
+      i.move();
+
+def add_a_ball():
   tx = random.randint(0, screen_width);
   ty = random.randint(0, screen_height);
-  r = itor(sampleimg(tx, ty));
-  circle(tx, ty, int(r));
+  vx = random.randint(-8, 8);
+  vy = random.randint(-8, 8);
+  addball(tx, ty, vx, vy);
 
-pygame.display.update()
-
-time.sleep(2)
+for i in range(0, 8000):
+   for j in range(0, 5):
+     add_a_ball()
+   moveballs()
+   screen.fill(black)
+   drawballs()
+   pygame.display.update()
+   time.sleep(1.0 / 30.0);
 
