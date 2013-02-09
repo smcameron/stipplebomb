@@ -42,6 +42,9 @@ screen_height = 700
 scaling_factor = (0.0 + screen_height) / (0.0 + image_height);
 black = (0, 0, 0)
 white = (255, 255, 255)
+zone = {}
+xzones = 10.0
+yzones = 10.0
 
 # origin on screen
 osx = (screen_width / 2.0) - (image_width / 2.0) * scaling_factor;
@@ -117,7 +120,16 @@ class ball:
 balls = [];
 
 def addball(x, y, vx, vy):
-  balls.append(ball(x, y, vx, vy))
+  myball = ball(x, y, vx, vy);
+  balls.append(myball)
+  zx = int(x / xzones)
+  zy = int(x / yzones)
+  if (zx, zy) in zone:
+     blist = zone[(zx, zy)];
+     blist.append(myball);
+     zone[(zx, zy)] = blist;
+  else:
+     zone[(zx, zy)] = [myball]
 
 def drawballs():
    for i in balls:
