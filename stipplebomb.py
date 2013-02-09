@@ -22,16 +22,26 @@
 #
 
 import pygame
+import time
 import os, sys
 import Image
 
 im = Image.open("image.jpg")
+
 x = 3
 y = 4
 
 pix = im.load()
 print pix[x,y]
+image_width = im.size[0];
+image_height = im.size[1];
+print "w = ", image_width, "h = ", image_height
 
 screen = pygame.display.set_mode((640,480))
 pygame.display.update()
+
+pygame.draw.circle(screen, (255,255,255), (100, 100), 50, 0);
+pygame.display.update()
+
+time.sleep(10)
 
