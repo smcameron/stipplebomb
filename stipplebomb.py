@@ -30,11 +30,7 @@ import math
 
 im = Image.open("image.jpg")
 
-x = 3
-y = 4
-
 pix = im.load()
-print pix[x,y]
 image_width = 0.0 + im.size[0];
 image_height = 0.0 + im.size[1];
 screen_width = 800
@@ -43,14 +39,16 @@ scaling_factor = (0.0 + screen_height) / (0.0 + image_height);
 black = (0, 0, 0)
 white = (255, 255, 255)
 zone = {}
-xzones = 10.0
-yzones = 10.0
+xzones = 20.0
+yzones = 20.0
+maxvel = 10.0
+
+# offsets for 8 cardinal directions 
+offset = [(0, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)];
 
 # origin on screen
 osx = (screen_width / 2.0) - (image_width / 2.0) * scaling_factor;
 osy = 0.0;
-
-print "w = ", image_width, "h = ", image_height
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.update()
@@ -77,7 +75,7 @@ def sampleimg(sx, sy):
 
 # image intensity to circle radius
 def itor(i):
-   r = ((0.0 + i) / 255.0) * 7.0;
+   r = ((0.0 + i) / 255.0) * 10.0;
    if r < 0.01:
 	r = 0;
    return r;
@@ -124,6 +122,51 @@ class ball:
          newlist = [self]
       zone[(nzx, nzy)] = newlist
 
+   def sum_one_force(self, i):
+       dist = (self.x - i.x) * (self.x - i.x) + (self.y - i.y) * (self.y - i.y)
+       if dist > 400:
+          return;
+       d = math.sqrt(dist);
+       if d <= 0.01:
+          d = 0.01;
+       r1 = itor(sampleimg(int(self.x), int(self.y))); 
+       r2 = itor(sampleimg(int(i.x), int(i.y))); 
+       if r1 < 0.01:
+          r1 = 0.01;
+       if r2 < 0.01:
+          r2 = 0.01;
+       if dist > 0:
+          force = (0.0 + r1) * (0.0 + r2) / dist;
+       else:
+          force = 8.0;
+       force = 4.5 * force
+       xforce = ((self.x - i.x) / d) * force;
+       yforce = ((self.y - i.y) / d) * force;
+       xa = 1.0 * xforce / r1;
+       ya = 1.0 * yforce / r1;
+       self.vx += xa;
+       self.vy += ya;
+       if self.vx > maxvel:
+	  self.vx = maxvel
+       if self.vx < -maxvel:
+	  self.vx = -maxvel
+       if self.vy > maxvel:
+	  self.vy = maxvel
+       if self.vy < -maxvel:
+	  self.vy = -maxvel
+
+   def sum_zone_forces(self, zx, zy):
+      if (zx, zy) in zone:
+        blist = zone[(zx, zy)]
+        for i in blist:
+            self.sum_one_force(i);
+
+   def sum_all_forces(self):
+       for o in offset:
+           zx = int(self.x / xzones);
+           zy = int(self.y / yzones);
+           self.sum_zone_forces(zx + o[0], zy + o[1]);
+
    def move(self):
       # calculate current zone
       oldx = self.x
@@ -141,8 +184,8 @@ class ball:
          self.y -= 0.0 + screen_height; 
 
       # damp velocity 
-      self.vx = 0.95 * self.vx
-      self.vy = 0.95 * self.vy
+      self.vx = 0.90 * self.vx
+      self.vy = 0.90 * self.vy
       self.reset_zone(oldx, oldy)
 
    def draw(self):
@@ -170,21 +213,27 @@ def drawballs():
 
 def moveballs():
    for i in balls:
+      i.sum_all_forces();
       i.move();
 
 def add_a_ball():
-  tx = random.randint(0, screen_width);
-  ty = random.randint(0, screen_height);
-  vx = random.randint(-8, 8);
-  vy = random.randint(-8, 8);
+  # tx = random.randint(0, screen_width);
+  # ty = random.randint(0, screen_height);
+  # vx = random.randint(-8, 8);
+  # vy = random.randint(-8, 8);
+  tx = random.randint(screen_width / 2 - 50, screen_width / 2 + 50);
+  ty = random.randint(screen_height / 2 - 50, screen_height / 2 + 50);
+  vx = random.randint(-2, 2);
+  vy = random.randint(-2, 2);
   addball(tx, ty, vx, vy);
 
-for i in range(0, 8000):
-   for j in range(0, 5):
-     add_a_ball()
+for i in range(0, 5000):
+   if i < 300:
+     for j in range(0, 20):
+       add_a_ball()
    moveballs()
    screen.fill(black)
    drawballs()
    pygame.display.update()
-   time.sleep(1.0 / 30.0);
+   # time.sleep(1.0 / 30.0);
 
