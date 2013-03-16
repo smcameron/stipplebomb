@@ -32,6 +32,10 @@ imagename = "image.jpg";
 if (len(sys.argv) >= 2):
   imagename = sys.argv[1];
 
+niterations = 1500;
+if (len(sys.argv) >= 3):
+  niterations = int(sys.argv[2]);
+
 im = Image.open(imagename)
 
 pix = im.load()
@@ -240,7 +244,7 @@ def add_a_ball():
   vy = random.randint(-2, 2);
   addball(tx, ty, vx, vy);
 
-for i in range(0, 2000):
+for i in range(0, niterations):
    if i < 85:
      for j in range(0, 20):
        add_a_ball()
