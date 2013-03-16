@@ -33,22 +33,22 @@ im = Image.open("image.jpg")
 pix = im.load()
 image_width = 0.0 + im.size[0];
 image_height = 0.0 + im.size[1];
-screen_width = 800
-screen_height = 700
-scaling_factor = (0.0 + screen_height) / (0.0 + image_height);
+screen_width = 800 
+screen_height = int(screen_width * image_height / image_width);
+scaling_factor = (0.8 * screen_height) / (0.0 + image_height);
 black = (0, 0, 0)
 white = (255, 255, 255)
 zone = {}
 xzones = 20.0
 yzones = 20.0
-maxvel = 10.0
+maxvel = 25.0
 
 # offsets for 8 cardinal directions 
 offset = [(0, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)];
 
 # origin on screen
 osx = (screen_width / 2.0) - (image_width / 2.0) * scaling_factor;
-osy = 0.0;
+osy = (screen_height * 0.1);
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.update()
@@ -193,6 +193,14 @@ class ball:
       if (r > 0.01):
           circle(int(self.x), int(self.y), int(r));
 
+   def printball(self):
+      r = itor(sampleimg(int(self.x), int(self.y)));
+      if (r > 0.01):
+         print "translate(v = [", self.x, ", ", self.y, "]) {";
+	 # print "   circle(", r, ", $fn = 50);"; 
+	 print "   circle(", r, ");"; 
+	 print "}";
+
 balls = [];
 
 def addball(x, y, vx, vy):
@@ -222,13 +230,14 @@ def add_a_ball():
   # vx = random.randint(-8, 8);
   # vy = random.randint(-8, 8);
   tx = random.randint(screen_width / 2 - 50, screen_width / 2 + 50);
-  ty = random.randint(screen_height / 2 - 50, screen_height / 2 + 50);
+  ty = random.randint(int (screen_height * 0.9 / 2 + screen_height * 0.05) - 50,
+				int(screen_height * 0.9 / 2 + screen_height * 0.05) + 50);
   vx = random.randint(-2, 2);
   vy = random.randint(-2, 2);
   addball(tx, ty, vx, vy);
 
-for i in range(0, 5000):
-   if i < 300:
+for i in range(0, 2000):
+   if i < 85:
      for j in range(0, 20):
        add_a_ball()
    moveballs()
@@ -236,4 +245,10 @@ for i in range(0, 5000):
    drawballs()
    pygame.display.update()
    # time.sleep(1.0 / 30.0);
+
+for i in range(0, int(xzones)):
+   for j in range(0, int(yzones)):
+      if (i, j) in zone:
+         for b in zone[(i, j)]:
+		b.printball();
 
