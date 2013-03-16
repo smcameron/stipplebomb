@@ -28,7 +28,11 @@ import Image
 import random
 import math
 
-im = Image.open("image.jpg")
+imagename = "image.jpg";
+if (len(sys.argv) >= 2):
+  imagename = sys.argv[1];
+
+im = Image.open(imagename)
 
 pix = im.load()
 image_width = 0.0 + im.size[0];
