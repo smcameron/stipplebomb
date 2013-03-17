@@ -28,6 +28,7 @@ import Image
 import random
 import math
 
+starmode = 1;
 imagename = "image.jpg";
 if (len(sys.argv) >= 2):
   imagename = sys.argv[1];
@@ -41,11 +42,12 @@ im = Image.open(imagename)
 pix = im.load()
 image_width = 0.0 + im.size[0];
 image_height = 0.0 + im.size[1];
-screen_width = 800 
+screen_width = 700 
 screen_height = int(screen_width * image_height / image_width);
 scaling_factor = (0.8 * screen_height) / (0.0 + image_height);
 black = (0, 0, 0)
 white = (255, 255, 255)
+lightblue = (150, 150, 255);
 zone = {}
 xzones = 20.0
 yzones = 20.0
@@ -88,20 +90,36 @@ def itor(i):
 	r = 0;
    return r;
     
-def circle(x, y, r):
-	pygame.draw.circle(screen, white, (x, y), r, 0);
+def star(x, y, r, b):
+	mycolor = (b.cr, b.cg, b.cb);
+	pygame.draw.line(screen, mycolor, (x - r, y), (x + r, y), 1); 
+	pygame.draw.line(screen, mycolor, (x, y - r), (x, y + r), 1); 
+	if ((r / 2.0) < 1.0):
+		pygame.draw.circle(screen, mycolor, (x, y), r / 2, 0);
+	else:
+		pygame.draw.circle(screen, mycolor, (x, y), r / 2, 0);
+		pygame.draw.circle(screen, white, (x, y), r / 4, 0);
+
+def circle(x, y, r, b):
+		pygame.draw.circle(screen, white, (x, y), r);
 
 class ball:
    x = 0.0;
    y = 0.0;
    vx = 0.0;
    vy = 0.0;
+   cr = 255.0;
+   cb = 255.0;
+   cg = 255.0;
 
    def __init__(self, x, y, vx, vy):
       self.x = x;
       self.y = y;
       self.vx = vx;
       self.vy = vy;
+      self.cr -= random.randint(0, 100);
+      self.cg -= random.randint(0, 100);
+      self.cb -= random.randint(0, 100);
 
    def reset_zone(self, oldx, oldy):
 
@@ -199,7 +217,10 @@ class ball:
    def draw(self):
       r = itor(sampleimg(int(self.x), int(self.y)));
       if (r > 0.01):
-          circle(int(self.x), int(self.y), int(r));
+          if (starmode):
+              star(int(self.x), int(self.y), int(r), self);
+          else:
+              circle(int(self.x), int(self.y), int(r), self);
 
    def printball(self):
       r = itor(sampleimg(int(self.x), int(self.y)));
