@@ -28,7 +28,7 @@ import Image
 import random
 import math
 
-starmode = 1;
+starmode = 0;
 imagename = "image.jpg";
 if (len(sys.argv) >= 2):
   imagename = sys.argv[1];
