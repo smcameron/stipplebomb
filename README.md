@@ -7,12 +7,13 @@ interesting method.
 The method is as follows:
 
 A rectangular field is mapped to the image so that coordinates in the
-lot correspond to coordinates in the image.
+field correspond to coordinates in the image.
 
 "Balls" are introduced into the field.  The radius of the balls is
 proportional to the intensity of the image at the corresponding coordinate.
 The balls are given some initial velocity, and there is some friction to
-slow them down.  The balls also have a repulsive magnetic field which varies in strength that is again proportional to the radius of the ball
+slow them down.  The balls also have a repulsive magnetic field which 
+varies in strength that is again proportional to the radius of the ball
 (and to the image intensity at the ball's corresponding image coordinate).
 The force of this repulsive magnetic field diminishes with the square of
 the distance (so very rapidly falls off.)
